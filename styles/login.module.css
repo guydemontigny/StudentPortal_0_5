@@ -1,0 +1,17 @@
+.page {
+  text-align: center;
+}
+.title {
+  color: black;
+  text-align: center;
+  border: 5px solid lightgray;
+  border-radius: 10px;
+  margin: 20px 0px 20px;
+}
+.center {
+  color: black;
+  text-align: center;
+}
+.error {
+  color:red;
+}
