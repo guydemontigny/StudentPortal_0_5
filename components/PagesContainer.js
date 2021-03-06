@@ -4,7 +4,7 @@ const PagesContainer = ({T}) => {
     return(
         <div>
             <Head>
-                <title >{T.StudentPortalHead}</title>
+                <title >0-5{' '}{T.StudentPortalHead}</title>
                 <link rel="icon" type="image/gif" href="/img/Wheel2-blue-gold.gif" />
             </Head>
         </div>

@@ -18,7 +18,7 @@ const T = {
   ERR011: 'this code is not valid... Try again.', 
   ICanLearn: 'I can learn',
   ListOfOpportunities: 'LIST OF SERVICE OPPORTUNITIES',
-  ListOfSkills: 'LIST OF SKILLS',
+  ListOfSkills: 'LIST OF SKILLS OF ',
   LoginTitle: 'Student Portal Login',
   Logout: 'Logout',
   None: 'None',

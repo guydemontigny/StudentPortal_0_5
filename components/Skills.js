@@ -30,7 +30,12 @@ const Skills = ({props}) => {
       return (
         <Card>
           <Card.Header>
-            <Accordion.Toggle as={Button} variant="outline-secondary" size="sm" className="font-weight-bold" eventKey={skillCategory[0]}>
+            <Accordion.Toggle 
+              as={Button} 
+              variant="outline-secondary" 
+              size="sm" 
+              className="font-weight-bold" 
+              eventKey={skillCategory[0]}>
               {skillCategory[0]}
             </Accordion.Toggle>
           </Card.Header>
