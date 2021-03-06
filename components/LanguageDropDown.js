@@ -10,10 +10,14 @@ const LanguageDropDown = ({props}) => {
         return <option value={uiLang['0']} key={uiLang['0']}>{uiLang['1']}</option>
         });
     const handleLanguage = () => {
+        const spinner = document.getElementById("skills-spinner")
+        if (spinner) {spinner.hidden = false}
         const locale = document.getElementById("select-lang-id").value;
         router.push(`/${props.DB}/${locale}`)
         }
-
+    if (typeof window !== 'undefined') {
+        const spinner = document.getElementById("skills-spinner")
+        if (spinner) {spinner.hidden = true}}
 
     return (
         <select onChange={handleLanguage} 

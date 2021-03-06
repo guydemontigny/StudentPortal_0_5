@@ -12,7 +12,7 @@ export async function getStaticInfo(currentDB, currentLocale, resolvedUrl) {
     // Get the translated strings
     //
     const formData = new URLSearchParams();
-    formData.append('category', 'StudentPortal-Login');
+    formData.append('category', 'StudentPortal');
     formData.append('languageCode', currentLocale);
     formData.append('data', JSON.stringify(T));
     const res2 = await fetch(apiUrl(currentDB) + 'Translate', {
