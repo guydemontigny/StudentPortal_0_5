@@ -4,15 +4,16 @@ import PagesContainer from '../../components/PagesContainer'
 import Opportunities from '../../components/Opportunities'
 import Availability from '../../components/Availability'
 import Skills from '../../components/Skills'
-import {getCredentials, saveCredentials, saveDB, saveLocale, saveStudent, saveSkills, saveStudentPerCenter, saveCenterOpportunities, saveLocation} from '../../libs/storage'
+import {getCredentials, saveCredentials, saveDB, saveLocale, saveStudent, saveSkills, saveStudentPerCenter, saveCenterOpportunities, saveLocation, getLocation} from '../../libs/storage'
 import Login from '../../components/Login'
 import {apiUrl} from '../../appConfigs/config'
 import useSWR from "swr";
 import LanguageDropDown from '../../components/LanguageDropDown'
 import { logout } from '../../libs/APIs'
-import Nav from 'react-bootstrap/Nav'
+import {useState} from 'react'
 
 export default function App(props) {
+    const [currentTab, setCurrentTab] = useState("skills")
     saveDB(props.DB)
     saveLocale(props.locale)
     //
@@ -45,8 +46,6 @@ export default function App(props) {
         if (data.skills) {saveSkills(data.skills)}
     }
 
-    const credentialsReturned = getCredentials()
-
     if (getCredentials().error){
         return <Login props = {props} />
     }
@@ -54,7 +53,7 @@ export default function App(props) {
     //
     // *** MANAGE TABS ***
     //
-    function TabClick(Tab) {
+    function removeActive() {
         const tabContents = document.getElementsByClassName("tab-pane");
         for (let i = 0; i < tabContents.length; i++) {
             tabContents[i].classList.remove("show")
@@ -64,12 +63,23 @@ export default function App(props) {
         for (let i = 0; i < tabButtons.length; i++) {
             tabButtons[i].classList.remove("active")
         }
+    }
+/*    function TabClick(Tab) {
+        removeActive()
         document.getElementById("button-" + Tab).classList.add("active")
         const contentDoc = document.getElementById("content-" + Tab)
         if (contentDoc){
             contentDoc.classList.add("active")
             contentDoc.classList.add("show")
         }
+    }*/
+    removeActive()
+    const contentDoc = document.getElementById("content-" + currentTab)
+    const tabContents = document.getElementById("button-" + currentTab);
+    if (contentDoc){
+        contentDoc.classList.add("active")
+        contentDoc.classList.add("show")
+        tabContents.classList.add("active")
     }
   //
   // *** RETURN THE MAIN PAGE
@@ -81,13 +91,13 @@ export default function App(props) {
             <li className="nav-item dropdown" >
                 <LanguageDropDown props = {props} />
             </li>
-            <li className="nav-item" onClick={() => TabClick("skills")}>
-                <a href="#" className="nav-link active" variant = "secondary" data-toggle="tab" id="button-skills">{T.Skills}</a>
+            <li className="nav-item" onClick={() => setCurrentTab("skills")}>
+                <a href="#" className="nav-link" variant = "secondary" data-toggle="tab" id="button-skills">{T.Skills}</a>
             </li>
-            <li className="nav-item"  onClick={() => TabClick("opportunities")}>
+            <li className="nav-item"  onClick={() => setCurrentTab("opportunities")}>
                 <a href="#"  className="nav-link" data-toggle="tab" id="button-opportunities">{T.Opportunities}</a>
             </li>
-            <li className="nav-item" onClick={() => TabClick("availability")}>
+            <li className="nav-item" onClick={() => setCurrentTab("availability")}>
                 <a href="#" className="nav-link " data-toggle="tab" id="button-availability">{T.Availability}</a>
             </li>
             <li className="nav-item" onClick={ () => {logout()}}>
@@ -101,7 +111,7 @@ export default function App(props) {
             <div className="tab-pane fade" id="content-availability">
                 <Availability props = {props} />
             </div>
-            <div className="tab-pane fade show active" id="content-skills">
+            <div className="tab-pane fade" id="content-skills">
                 <Skills props = {props} />
             </div>
         </div>

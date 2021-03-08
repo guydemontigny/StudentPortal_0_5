@@ -1,5 +1,5 @@
 import {Accordion, Card, Button, ToggleButtonGroup, ToggleButton, Spinner} from 'react-bootstrap'
-import {getSkills, setSkillValue} from '../libs/storage'
+import {getSkills, getStudent, setSkillValue} from '../libs/storage'
 
 const Skills = ({props}) => {
     const T = props.T
@@ -54,7 +54,7 @@ const Skills = ({props}) => {
         <Spinner animation="border" className="ml-3 font-weight-bold" variant="secondary" role="status" id="skills-spinner" hidden={true}>
           <span className="sr-only">Loading...</span>
         </Spinner> 
-        <br/><p className="ml-4 font-weight-bold">{T.ListOfSkills}</p>
+        <br/><p className="ml-4 font-weight-bold">{T.ListOfSkills}{' '}{getStudent().firstName}{' '}{getStudent().lastName}</p>
         <Accordion >
           {skillCategories}
         </Accordion>
