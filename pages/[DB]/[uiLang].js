@@ -10,10 +10,8 @@ import {apiUrl} from '../../appConfigs/config'
 import useSWR from "swr";
 import LanguageDropDown from '../../components/LanguageDropDown'
 import { logout } from '../../libs/APIs'
-import {useState} from 'react'
 
 export default function App(props) {
-    const [currentTab, setCurrentTab] = useState("skills")
     saveDB(props.DB)
     saveLocale(props.locale)
     //
@@ -64,7 +62,7 @@ export default function App(props) {
             tabButtons[i].classList.remove("active")
         }
     }
-/*    function TabClick(Tab) {
+    function TabClick(Tab) {
         removeActive()
         document.getElementById("button-" + Tab).classList.add("active")
         const contentDoc = document.getElementById("content-" + Tab)
@@ -72,10 +70,16 @@ export default function App(props) {
             contentDoc.classList.add("active")
             contentDoc.classList.add("show")
         }
-    }*/
+    }
+    let contentDoc, tabContents
     removeActive()
-    const contentDoc = document.getElementById("content-" + currentTab)
-    const tabContents = document.getElementById("button-" + currentTab);
+    if (getLocation().locationId) {
+        contentDoc = document.getElementById("content-opportunities")
+        tabContents = document.getElementById("button-opportunities");
+    } else {
+        contentDoc = document.getElementById("content-skills")
+        tabContents = document.getElementById("button-skills");
+    }
     if (contentDoc){
         contentDoc.classList.add("active")
         contentDoc.classList.add("show")
@@ -91,13 +95,13 @@ export default function App(props) {
             <li className="nav-item dropdown" >
                 <LanguageDropDown props = {props} />
             </li>
-            <li className="nav-item" onClick={() => setCurrentTab("skills")}>
+            <li className="nav-item" onClick={() => TabClick("skills")}>
                 <a href="#" className="nav-link" variant = "secondary" data-toggle="tab" id="button-skills">{T.Skills}</a>
             </li>
-            <li className="nav-item"  onClick={() => setCurrentTab("opportunities")}>
+            <li className="nav-item"  onClick={() => TabClick("opportunities")}>
                 <a href="#"  className="nav-link" data-toggle="tab" id="button-opportunities">{T.Opportunities}</a>
             </li>
-            <li className="nav-item" onClick={() => setCurrentTab("availability")}>
+            <li className="nav-item" onClick={() => TabClick("availability")}>
                 <a href="#" className="nav-link " data-toggle="tab" id="button-availability">{T.Availability}</a>
             </li>
             <li className="nav-item" onClick={ () => {logout()}}>
