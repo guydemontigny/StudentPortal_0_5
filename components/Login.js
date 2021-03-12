@@ -1,9 +1,9 @@
 import styles from '../styles/login.module.css'
 import Center from 'react-center';
 import { getCredentials, saveCredentials } from '../libs/storage';
-import {resendDRCode, logout} from '../libs/APIs';
+import {resendDRCode} from '../libs/APIs';
 import PagesContainer from '../components/PagesContainer'
-import LanguageDropDown from '../components/LanguageDropDown'
+import LoginNavBar from '../components/LoginNavBar'
 
 function Login({props}) {
     const T = props.T
@@ -14,7 +14,7 @@ function Login({props}) {
     }
     function handleCellPhoneChange(value) {
         const credentials = getCredentials()
-        credentials.cellPhone = value
+        credentials.cellPhone = formatPhoneNumber(value)
         saveCredentials(credentials)
     }
     const handleCodeChange = e => {
@@ -28,54 +28,88 @@ function Login({props}) {
             resendBtn.disabled = false
         }
     }
+    const errCode = getCredentials().error.split(' ')[0]
 
+    //
+    // LOGOUT PAGE
+    //
+    if (errCode === "ERR020") {
+        return (
+            <div>
+            <PagesContainer T={props.T}/>
+            <Center >
+                <div className={styles.center}>
+                    <form className={styles.center}>
+                        <div>
+                            <br/>
+                            <br/>{T.LogoutMsg}
+                        </div>
+                        <div>
+                            <br/><br/>
+                            <button id="btn-return-to-login-id" 
+                                onClick = {()=>{const credentials=getCredentials(); credentials.error = "ERR000"; saveCredentials(credentials)}}
+                                className={styles.button}>
+                                    {T.ReturnToLogin}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </Center>
+            </div>
+        )
+    }
 
     //
     // INITIAL LOGIN: Enter Email or Cell Phone Number
     //
+    let errMessage = T[errCode]
     if (getCredentials().error < 'ERR010') {
       return (
         <div>
         <PagesContainer T={props.T}/>
-        <ul className="nav nav-tabs " >
-              <li className="nav-item dropdown" >
-                  <LanguageDropDown props = {props} />
-              </li>
-        </ul>
-        <Center >
-        <div className={styles.center}>
-            <h1 className={styles.title}>
-                {T.LoginTitle}
-            </h1>
-            <form className={styles.center}>
-                <br/>
 
-                <label htmlFor="email-input-id" className="form-label">{T.EmailAddress}</label>
-                <input className="form-control" 
-                    type="email" 
-                    onBlur={(e) => handleEmailChange(e.target.value)} 
-                    id="email-input-id"/>
-
-                <label htmlFor="cell-input-id" className="form-label">{T.Or}{' '}{T.CellNumber}</label>
-                <input className="form-control" 
-                    type="tel" 
-                    placeholder="999-999-9999" 
-                    pattern="^(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$"
-                    onBlur={(e) => handleCellPhoneChange(e.target.value)} 
-                    id="cell-input-id"/>
-                <div>
-                    <br/>
+        <div className="row">
+            <div className="col-md-12">
+                <LoginNavBar props={props}/>
+                <Center >
+                <div className={styles.center}>
+                    <h1 className={styles.title}>
+                        {T.LoginTitle}
+                    </h1>
+                    <form className={styles.center}>
+                        <br/>
+                        <label htmlFor="email-input-id" className="form-label">{T.EmailAddress}</label>
+                        <input className="form-control" 
+                            type="email" 
+                            defaultValue = {getCredentials().email}
+                            onChange={(e) => handleEmailChange(e.target.value)} 
+                            id="email-input-id"/>
+                        <label htmlFor="cell-input-id" className="form-label">{T.Or}{' '}{T.CellNumber}</label>
+                        <input className="form-control" 
+                            type="tel" 
+                            placeholder="999-999-9999" 
+                            defaultValue = {getCredentials().cellPhone}
+                            pattern="^(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$"
+                            onChange={(e) => handleCellPhoneChange(e.target.value)} 
+                            id="cell-input-id"/>
+                        <div>
+                            <br/>
+                            <br/><div className={styles.error}>{errMessage}</div>
+                        </div>
+                        <div>
+                            <br/><br/>
+                            <button id="btn-submit-id" 
+                                onClick = {()=>{
+                                        document.getElementById("spinner-login-id").hidden = false}}
+                                className={styles.button}>
+                                    {T.Submit}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <br/><br/>
-                    <button id="btn-submit-id" 
-                        className={styles.button}>
-                            {T.Submit}
-                    </button>
-                </div>
-            </form>
+                </Center>
+            </div>
         </div>
-        </Center>
         </div>
     )}
     //
@@ -91,56 +125,67 @@ function Login({props}) {
     return( 
       <div>
       <PagesContainer T={props.T}/>
-      <ul className="nav nav-tabs " >
-            <li className="nav-item dropdown" >
-                <LanguageDropDown props = {props} />
-            </li>
-      </ul>
-      <Center >
-        <div className={styles.center}>
-        <h1 className={styles.title}>
-            {T.LoginTitle}
-        </h1>
-        <form className={styles.center}>
-            <label>
-                <p>{T.Code1} {credentialsReturned.email}{credentialsReturned.cellPhone}</p>
-                <div className="input-group"  >
-                    <div className={styles.center} >
-                    <button  
-                        className={styles.button} 
-                        id = "resendbtn-id"
-                        onClick={resendDRCode}>
-                            {T.ResendCode}
-                    </button>
+      <div className="row">
+            <div className="col-md-12">
+                <LoginNavBar props={props}/>
+                <Center >
+                    <div className={styles.center}>
+                    <h1 className={styles.title}>
+                        {T.LoginTitle}
+                    </h1>
+                    <form className={styles.center}>
+                        <label>
+                            <p>{T.Code1} {credentialsReturned.email}{credentialsReturned.cellPhone}</p>
+                            <div className="input-group"  >
+                                <div className={styles.center} >
+                                <button  
+                                    className={styles.button} 
+                                    id = "resendbtn-id"
+                                    onClick={resendDRCode}>
+                                        {T.ResendCode}
+                                </button>
+                                </div>
+                                <input type="text" 
+                                    onChange={handleCodeChange} 
+                                    id="code-input-id" 
+                                    placeholder={T.Code2} 
+                                    autoFocus="autofocus"/>
+                            </div>
+                        </label>
+                        <div>
+                            <br/><div className={styles.error}>{errorMessage}</div>
+                            <br/><br/>{credentialsReturned.firstName} {' '} {credentialsReturned.lastName}
+                        </div>
+                        <div>
+                            <br/><br/>
+                            <button className={styles.button} 
+                                    type = "submit"
+                                    onClick={ () => {
+                                        document.getElementById("spinner-login-id").hidden = false
+                                        const credentials = getCredentials(); 
+                                        credentials.code = document.getElementById("code-input-id").value; 
+                                        saveCredentials(credentials);
+                                        window.location.reload(false);
+                                    }}>
+                                {T.Submit}
+                            </button>
+                        </div>
+                    </form>
                     </div>
-                    <input type="text" 
-                        onChange={handleCodeChange} 
-                        id="code-input-id" 
-                        placeholder={T.Code2} 
-                        autoFocus="autofocus"/>
-                </div>
-            </label>
-            <div>
-                <br/><div className={styles.error}>{errorMessage}</div>
-                <br/><br/>{credentialsReturned.firstName} {' '} {credentialsReturned.lastName}
+                </Center>
             </div>
-            <div>
-                <br/><br/>
-                <button className={styles.button} 
-                        type = "submit"
-                        onClick={ () => {
-                        const credentials = getCredentials(); 
-                        credentials.code = document.getElementById("code-input-id").value; 
-                        saveCredentials(credentials);
-                        window.location.reload(false);
-                        }}>
-                    {T.Submit}
-                </button>
-            </div>
-        </form>
         </div>
-      </Center>
-      </div>
+        </div>
     )
 }
+
+function formatPhoneNumber(phoneNumber) {
+    let formattedNumber = ""
+    for (var j=phoneNumber.length - 1; j >= 0; j--) {
+        if ((formattedNumber.length === 4) || (formattedNumber.length === 8)) {formattedNumber = "-" + formattedNumber}
+        if (!isNaN(phoneNumber.substr(j,1))) {formattedNumber = phoneNumber.substr(j,1) + formattedNumber}
+    }
+    return formattedNumber
+}
+
 export default Login

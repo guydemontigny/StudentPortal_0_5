@@ -16,6 +16,8 @@ export function resendDRCode(){
     
 export function logout(){
     flushDRCode()
-    saveCredentials(initialCredentials())
+    const credentials = initialCredentials()
+    credentials.error = "ERR020 Logout"
+    saveCredentials(credentials)
     window.location.reload(false)
 }

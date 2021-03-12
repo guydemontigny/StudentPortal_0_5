@@ -2,7 +2,8 @@ import {Accordion, Card, Button, ToggleButtonGroup, ToggleButton, Spinner} from 
 import {getSkills, getStudent, setSkillValue} from '../libs/storage'
 
 const Skills = ({props}) => {
-    const T = props.T
+    if (props.currentTab !== 'skills') return null
+    const T = props.props.T
     // Create the list of skills
     let skillCategories = Object.entries(getSkills()).map((skillCategory) => {
       // We have the category

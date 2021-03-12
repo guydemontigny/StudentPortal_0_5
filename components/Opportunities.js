@@ -5,19 +5,20 @@ import styles from '../styles/login.module.css'
 import {Card, Button} from 'react-bootstrap'
 import {useState} from 'react'
 
-const Opportunities = ({props}) => {
-    const T = props.T
+const Opportunities = ({props}, {currentTab}) => {
+    if (props.currentTab !== 'opportunities') return null
+    const T = props.props.T
     const [center, setCenter] = useState(getLocation())
     //
     // *** SETUP THE CENTERS DROP-DOWN
     //
-    let optionItems = props.centers.map((center) => {
+    let optionItems = props.props.centers.map((center) => {
         return <option value={center[0] + ' - ' + center[1]["LocationName"] } key={center[0]}>{center[1]["DhammaName"]}</option>
         });
     function handleCenterChange(value) {
         const key = value.split(' ')
         let locationFound = false
-        props.centers.map((center) => {
+        props.props.centers.map((center) => {
             if(center[0] === key[0]) {
                 const location = {
                     locationId: key[0],

@@ -1,6 +1,4 @@
 import {getStaticInfo} from '../../libs/getStaticInfo'
-import "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
-import PagesContainer from '../../components/PagesContainer'
 import Opportunities from '../../components/Opportunities'
 import Availability from '../../components/Availability'
 import Skills from '../../components/Skills'
@@ -8,10 +6,24 @@ import {getCredentials, saveCredentials, saveDB, saveLocale, saveStudent, saveSk
 import Login from '../../components/Login'
 import {apiUrl} from '../../appConfigs/config'
 import useSWR from "swr";
-import LanguageDropDown from '../../components/LanguageDropDown'
+import LanguageNavDropDown from '../../components/LanguageNavDropDown'
 import { logout } from '../../libs/APIs'
+import React, { useState, useEffect } from 'react';
+import {Nav, Navbar, Spinner} from 'react-bootstrap'
+
 
 export default function App(props) {
+    const [currentTab, setCurrentTab] = useState('skills')
+    const [expanded, setExpanded] = useState(false)
+
+    useEffect(() => {
+        let doc = document.getElementById("spinner-id")
+        if (!doc){doc = document.getElementById("spinner-login-id")}
+        if (doc) {doc.hidden = true}
+    })
+    
+    const PropsAndTab = {props : props, currentTab: currentTab}
+
     saveDB(props.DB)
     saveLocale(props.locale)
     //
@@ -48,80 +60,47 @@ export default function App(props) {
         return <Login props = {props} />
     }
     const T = props.T
-    //
-    // *** MANAGE TABS ***
-    //
-    function removeActive() {
-        const tabContents = document.getElementsByClassName("tab-pane");
-        for (let i = 0; i < tabContents.length; i++) {
-            tabContents[i].classList.remove("show")
-            tabContents[i].classList.remove("active")
-        }
-        const tabButtons = document.getElementsByClassName("nav-link");
-        for (let i = 0; i < tabButtons.length; i++) {
-            tabButtons[i].classList.remove("active")
-        }
-    }
-    function TabClick(Tab) {
-        removeActive()
-        document.getElementById("button-" + Tab).classList.add("active")
-        const contentDoc = document.getElementById("content-" + Tab)
-        if (contentDoc){
-            contentDoc.classList.add("active")
-            contentDoc.classList.add("show")
-        }
-    }
-    let contentDoc, tabContents
-    removeActive()
-    if (getLocation().locationId) {
-        contentDoc = document.getElementById("content-opportunities")
-        tabContents = document.getElementById("button-opportunities");
-    } else {
-        contentDoc = document.getElementById("content-skills")
-        tabContents = document.getElementById("button-skills");
-    }
-    if (contentDoc){
-        contentDoc.classList.add("active")
-        contentDoc.classList.add("show")
-        tabContents.classList.add("active")
-    }
-  //
-  // *** RETURN THE MAIN PAGE
-  //
-  return(
-    <div>
-        <PagesContainer T={props.T}/>
-        <ul className="nav nav-tabs nav-fill" >
-            <li className="nav-item dropdown" >
-                <LanguageDropDown props = {props} />
-            </li>
-            <li className="nav-item" onClick={() => TabClick("skills")}>
-                <a href="#" className="nav-link" variant = "secondary" data-toggle="tab" id="button-skills">{T.Skills}</a>
-            </li>
-            <li className="nav-item"  onClick={() => TabClick("opportunities")}>
-                <a href="#"  className="nav-link" data-toggle="tab" id="button-opportunities">{T.Opportunities}</a>
-            </li>
-            <li className="nav-item" onClick={() => TabClick("availability")}>
-                <a href="#" className="nav-link " data-toggle="tab" id="button-availability">{T.Availability}</a>
-            </li>
-            <li className="nav-item" onClick={ () => {logout()}}>
-                <a href="#" className="nav-link" data-toggle="tab" id="button-skills">{T.Logout}</a>
-            </li>
-        </ul>
-        <div className="tab-content">
-            <div className="tab-pane fade" id="content-opportunities">
-                <Opportunities props = {props} />
-            </div>
-            <div className="tab-pane fade" id="content-availability">
-                <Availability props = {props} />
-            </div>
-            <div className="tab-pane fade" id="content-skills">
-                <Skills props = {props} />
+    return(
+        <div className="row">
+            <div className="col-md-12">
+                <Navbar bg="dark" variant="dark" sticky="top" expanded = {expanded} expand='sm' >
+                    <Navbar.Brand href="">   
+                    <Spinner animation="border" 
+                        variant="secondary" 
+                        role="status" 
+                        id="spinner-id" 
+                        hidden={true}>
+                            <span className="sr-only">Loading...</span>
+                    </Spinner> 
+                        <img src="/img/Wheel2-blue-gold.gif"
+                            width="60" height="60"
+                            className="d-inline-block align-top"
+                            alt="Vipassana"/>
+                    </Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => {setExpanded(!expanded)}}>
+                        <span className="navbar-toggle-label">{T.Menu}{' '}</span>
+                        <span className="navbar-toggle-icon" />
+                        <img src="/img/Hamburger_icon.png"
+                            width="30" height="30"
+                            className="d-inline-block align-top"
+                            alt=""/>
+                    </Navbar.Toggle>
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto"  >
+                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("skills")}}>{T.Skills}</Nav.Link>
+                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("opportunities")}}>{T.Opportunities}</Nav.Link>
+                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("availability")}}>{T.Availability}</Nav.Link>
+                        <LanguageNavDropDown props = {props}/>
+                        <Nav.Link href="" onClick={() => logout()}>{T.Logout}</Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+                <Skills props = {PropsAndTab} />
+                <Opportunities props = {PropsAndTab}/>
+                <Availability props = {PropsAndTab}/>
             </div>
         </div>
-    </div>
-    )
-}
+    )}
 
 export async function getServerSideProps(props) {
     return(getStaticInfo(props.query.DB, props.query.uiLang, props.resolvedUrl))
