@@ -2,7 +2,7 @@ import {getStaticInfo} from '../../libs/getStaticInfo'
 import Opportunities from '../../components/Opportunities'
 import Availability from '../../components/Availability'
 import Skills from '../../components/Skills'
-import {getCredentials, saveCredentials, saveDB, saveLocale, saveStudent, saveSkills, saveStudentPerCenter, saveCenterOpportunities, saveLocation, getLocation} from '../../libs/storage'
+import {getCredentials, saveCredentials, saveDB, saveLocale, saveStudent, saveSkills, getCurrentTab, saveCurrentTab, saveCenterOpportunities, saveLocation, getLocation, saveStudentAvailability} from '../../libs/storage'
 import Login from '../../components/Login'
 import {apiUrl} from '../../appConfigs/config'
 import useSWR from "swr";
@@ -13,24 +13,23 @@ import {Nav, Navbar, Spinner} from 'react-bootstrap'
 
 
 export default function App(props) {
-    const [currentTab, setCurrentTab] = useState('skills')
+    const [currentTab, setCurrentTab] = useState(getCurrentTab())
     const [expanded, setExpanded] = useState(false)
 
     useEffect(() => {
         let doc = document.getElementById("spinner-id")
         if (!doc){doc = document.getElementById("spinner-login-id")}
         if (doc) {doc.hidden = true}
+        setCurrentTab(getCurrentTab())
     })
     
-    const PropsAndTab = {props : props, currentTab: currentTab}
-
     saveDB(props.DB)
     saveLocale(props.locale)
     //
     // CHECK CREDENTIALS
     //
     const credentials = getCredentials()
-    if (credentials.email || credentials.cellPhone){
+    if (credentials.error && (credentials.email || credentials.cellPhone)){
         const useStaleSWR = (dataKey) => {
             const revalidationOptions = {
               revalidateOnMount: true , //!cache.has(dataKey), //here we refer to the SWR cache
@@ -50,7 +49,7 @@ export default function App(props) {
 
         saveCredentials(data.credentials) // Save returned credentials
         if (data.student) {saveStudent(data.student)}
-        if (data.studentPerCenter) {saveStudentPerCenter(data.studentPerCenter)}
+        if (data.studentAvailability) {saveStudentAvailability(data.studentAvailability)}
         if (data.centerOpportunities) {saveCenterOpportunities(data.centerOpportunities)}
         if (data.location) {saveLocation(data.location)}
         if (data.skills) {saveSkills(data.skills)}
@@ -87,17 +86,17 @@ export default function App(props) {
                     </Navbar.Toggle>
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto"  >
-                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("skills")}}>{T.Skills}</Nav.Link>
-                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("opportunities")}}>{T.Opportunities}</Nav.Link>
-                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("availability")}}>{T.Availability}</Nav.Link>
+                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("skills"); saveCurrentTab("skills")}}>{T.Skills}</Nav.Link>
+                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("opportunities"); saveCurrentTab("opportunities")}}>{T.Opportunities}</Nav.Link>
+                        <Nav.Link href="" onClick={() => {setExpanded(false); setCurrentTab("availability"); saveCurrentTab("availability")}}>{T.Availability}</Nav.Link>
                         <LanguageNavDropDown props = {props}/>
                         <Nav.Link href="" onClick={() => logout()}>{T.Logout}</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
-                <Skills props = {PropsAndTab} />
-                <Opportunities props = {PropsAndTab}/>
-                <Availability props = {PropsAndTab}/>
+                {(currentTab === 'skills') && <Skills props = {props} />}
+                {(currentTab === 'opportunities') && <Opportunities props = {props}/>}
+                {(currentTab === 'availability') && <Availability props = {props}/>}
             </div>
         </div>
     )}

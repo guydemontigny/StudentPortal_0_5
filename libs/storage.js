@@ -31,20 +31,39 @@ export function getCredentials() {
     return credentials
   }
 //
+// Current tab
+//
+export function saveCurrentTab(currentTab){
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem('currentTab', currentTab)
+  }
+}
+export function getCurrentTab(){
+  if (typeof window !== 'undefined') {
+    const currentTab = sessionStorage.getItem('currentTab')
+    if (!currentTab) {
+      return 'skills'
+    } else {
+      return currentTab
+    }
+  } else {
+    return 'skills'
+  }
+}//
 // Database
 //
-  export function saveDB(DB){
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('DB', DB)
-    }
+export function saveDB(DB){
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem('DB', DB)
   }
-  export function getDB(){
-    if (typeof window !== 'undefined') {
-      return(sessionStorage.getItem('DB'))
-    } else {
-      return ''
-    }
+}
+export function getDB(){
+  if (typeof window !== 'undefined') {
+    return(sessionStorage.getItem('DB'))
+  } else {
+    return ''
   }
+}
 //
 // Current locale
 //
@@ -84,26 +103,39 @@ export function initialStudent() {
   }
 }
 //
-// The student per Center table
+// The student availability table
 //
-export function getStudentPerCenter() {
+export function getStudentAvailability() {
   if (typeof window !== 'undefined') {
-      const studentPerCenterString = sessionStorage.getItem('studentPerCenter');
-      if (studentPerCenterString) {
-          const studentPerCenter = JSON.parse(studentPerCenterString);
-          return studentPerCenter
+      const studentAvailabilityString = sessionStorage.getItem('studentAvailability')
+      if (studentAvailabilityString) {
+          const studentAvailability = JSON.parse(studentAvailabilityString)
+          if (studentAvailability[getLocation().locationId])
+            return studentAvailability[getLocation().locationId]
           }
   }
-  return ''
+  return {}
 }
-export function saveStudentPerCenter(studentPerCenter){
+export function saveStudentAvailability(studentAvailability){
   if (typeof window !== 'undefined') {
-    sessionStorage.setItem('studentPerCenter', JSON.stringify(studentPerCenter))
+    let studentAvailabilityTotal = {}
+    let studentAvailabilityString = sessionStorage.getItem('studentAvailability')
+    if (studentAvailabilityString) {
+      studentAvailabilityTotal = JSON.parse(studentAvailabilityString)
+    }
+    Object.entries(studentAvailability).map((locationAvailability) => {
+      studentAvailabilityTotal[locationAvailability[0]] = locationAvailability[1]
+    })
+    sessionStorage.setItem('studentAvailability', JSON.stringify(studentAvailabilityTotal))
   }
 }
-export function initialStudentPerCenter() {
-  return {
-    SYST: {}
+export function saveStudentAvailabilityField(fieldName, fieldValue){
+  if (typeof window !== 'undefined') {
+    const studentAvailability = JSON.parse(sessionStorage.getItem('studentAvailability'))
+    const currentLocation = getLocation().locationId
+    if (!studentAvailability[currentLocation]){studentAvailability[currentLocation]= {}}
+    studentAvailability[currentLocation][fieldName] = fieldValue
+    sessionStorage.setItem('studentAvailability', JSON.stringify(studentAvailability))
   }
 }
 //

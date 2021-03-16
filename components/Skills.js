@@ -2,8 +2,7 @@ import {Accordion, Card, Button, ToggleButtonGroup, ToggleButton, Spinner} from 
 import {getSkills, getStudent, setSkillValue} from '../libs/storage'
 
 const Skills = ({props}) => {
-    if (props.currentTab !== 'skills') return null
-    const T = props.props.T
+    const T = props.T
     // Create the list of skills
     let skillCategories = Object.entries(getSkills()).map((skillCategory) => {
       // We have the category
@@ -18,11 +17,11 @@ const Skills = ({props}) => {
                   name={skillItem[0]} 
                   defaultValue={skillItem[1]} 
                   onChange={(value) => {setSkillValue(skillCategory[0], skillItem[0], value)}}>
-                <ToggleButton value={3} variant = {"outline-info"}>{T.Professional}</ToggleButton>{' '}
-                <ToggleButton value={2} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 2)}} >{T.Experienced}</ToggleButton>{' '}
-                <ToggleButton value={1} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 1)}} >{T.ICanLearn}</ToggleButton>{' '}
+                <ToggleButton value={3} key={skillItem[0] + "3"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 2)}} >{T.Professional}</ToggleButton>{' '}
+                <ToggleButton value={2} key={skillItem[0] + "2"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 2)}} >{T.Experienced}</ToggleButton>{' '}
+                <ToggleButton value={1} key={skillItem[0] + "1"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 1)}} >{T.ICanLearn}</ToggleButton>{' '}
                 &ensp;
-                <ToggleButton value={0} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 0)}} >{T.None}</ToggleButton>{' '}
+                <ToggleButton value={0} key={skillItem[0] + "0"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 0)}} >{T.None}</ToggleButton>{' '}
               </ToggleButtonGroup>
             </Card.Text>
           </Card> 
