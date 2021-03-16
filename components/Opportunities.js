@@ -38,6 +38,7 @@ const Opportunities = ({props}) => {
             resetLocation()
             setCenter(getLocation())
         }
+        event.preventDefault()
     }
     function applyOpportunity(opportunityId, value) {
         const newCenterOpportunities = centerOpportunities

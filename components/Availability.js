@@ -12,13 +12,13 @@ const Availability = ({props}) => {
     const [startDate, setStartDate] = useState()
     const [endDate, setEndDate] = useState()
     const [dateDisabled, setDateDisabled] = useState(true)
-    const [notAvailable, setNotAvailable] = useState(true)
-    const [availableFromHome, setAvailableFromHome] = useState(true)
-    const [availableBetweenCourses, setAvailableBetweenCourses] = useState(true)
-    const [availableForChildCourses, setAvailableForChildCourses] = useState(true)
-    const [availableForCourses, setAvailableForCourses] = useState(true)
-    const [availableLongTerm, setAvailableLongTerm] = useState(true)
-    const [availableWorkPeriod, setAvailableWorkPeriod] = useState(true)
+    const [notAvailable, setNotAvailable] = useState(false)
+    const [availableFromHome, setAvailableFromHome] = useState(false)
+    const [availableBetweenCourses, setAvailableBetweenCourses] = useState(false)
+    const [availableForChildCourses, setAvailableForChildCourses] = useState(false)
+    const [availableForCourses, setAvailableForCourses] = useState(false)
+    const [availableLongTerm, setAvailableLongTerm] = useState(false)
+    const [availableWorkPeriod, setAvailableWorkPeriod] = useState(false)
 
     useEffect( () => {
       setNotAvailable(getStudentAvailability().notAvailable)
@@ -54,6 +54,7 @@ const Availability = ({props}) => {
             resetLocation()
             setCenter(getLocation())
         }
+        event.preventDefault()
     }
     function longTermChange(e) {
       setDateDisabled(!e.target.checked)

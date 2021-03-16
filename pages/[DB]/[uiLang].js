@@ -20,7 +20,7 @@ export default function App(props) {
         let doc = document.getElementById("spinner-id")
         if (!doc){doc = document.getElementById("spinner-login-id")}
         if (doc) {doc.hidden = true}
-        setCurrentTab(getCurrentTab())
+//        setCurrentTab(getCurrentTab())
     })
     
     saveDB(props.DB)
@@ -47,13 +47,11 @@ export default function App(props) {
         if (error) return (<div>An error has occurred: {error}</div>)
         if (!data) return (<div>Loading...</div>)
         saveCredentials(data.credentials) // Save returned credentials
-        if (credentials.error) {
             if (data.student) {saveStudent(data.student)}
             if (data.studentAvailability) {saveStudentAvailability(data.studentAvailability)}
             if (data.centerOpportunities) {saveCenterOpportunities(data.centerOpportunities)}
             if (data.location) {saveLocation(data.location)}
             if (data.skills) {saveSkills(data.skills)}
-        }
     }
 
     if (getCredentials().error){
