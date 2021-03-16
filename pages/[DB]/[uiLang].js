@@ -29,7 +29,7 @@ export default function App(props) {
     // CHECK CREDENTIALS
     //
     const credentials = getCredentials()
-    if (credentials.error && (credentials.email || credentials.cellPhone)){
+    if (credentials.email || credentials.cellPhone){
         const useStaleSWR = (dataKey) => {
             const revalidationOptions = {
               revalidateOnMount: true , //!cache.has(dataKey), //here we refer to the SWR cache
@@ -46,13 +46,14 @@ export default function App(props) {
 
         if (error) return (<div>An error has occurred: {error}</div>)
         if (!data) return (<div>Loading...</div>)
-
         saveCredentials(data.credentials) // Save returned credentials
-        if (data.student) {saveStudent(data.student)}
-        if (data.studentAvailability) {saveStudentAvailability(data.studentAvailability)}
-        if (data.centerOpportunities) {saveCenterOpportunities(data.centerOpportunities)}
-        if (data.location) {saveLocation(data.location)}
-        if (data.skills) {saveSkills(data.skills)}
+        if (credentials.error) {
+            if (data.student) {saveStudent(data.student)}
+            if (data.studentAvailability) {saveStudentAvailability(data.studentAvailability)}
+            if (data.centerOpportunities) {saveCenterOpportunities(data.centerOpportunities)}
+            if (data.location) {saveLocation(data.location)}
+            if (data.skills) {saveSkills(data.skills)}
+        }
     }
 
     if (getCredentials().error){
