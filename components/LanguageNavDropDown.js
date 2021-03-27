@@ -19,7 +19,7 @@ const LanguageNavDropDown = ({props}) => {
         doc.hidden = false
         }
     return (
-        <NavDropdown
+        <NavDropdown 
             title={props.UILangs[props.locale]} 
             defaultValue = {props.locale} 
             id="select-lang-id">

@@ -9,7 +9,7 @@ const Skills = ({props}) => {
       let skillItems = Object.entries(skillCategory[1]).map((skillItem) => {
         return (
           <Card className="ml-1">
-            <Card.Title className="ml-2">{skillItem[0]}</Card.Title>
+            <Card.Title className="ml-2">{T[skillItem[0]]}</Card.Title>
             <Card.Text className="ml-2 mb-3">{T.OfferService} &ensp;
               <ToggleButtonGroup 
                   type="radio" 
@@ -36,7 +36,7 @@ const Skills = ({props}) => {
               size="sm" 
               className="font-weight-bold" 
               eventKey={skillCategory[0]}>
-              {skillCategory[0]}
+              {T[skillCategory[0]]}
             </Accordion.Toggle>
           </Card.Header>
           <Accordion.Collapse eventKey={skillCategory[0]}>

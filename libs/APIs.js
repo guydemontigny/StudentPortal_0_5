@@ -16,8 +16,16 @@ export function resendDRCode(){
     
 export function logout(){
     flushDRCode()
-    const credentials = initialCredentials()
-    credentials.error = "ERR020 Logout"
-    saveCredentials(credentials)
-    window.location.reload(false)
+    if (typeof window !== 'undefined') {
+        const credentials = initialCredentials()
+        credentials.error = "ERR020 Logout"
+        saveCredentials(credentials)
+        sessionStorage.removeItem ('location')
+        sessionStorage.removeItem ('skills')
+        sessionStorage.removeItem ('centerOpportunities')
+        sessionStorage.removeItem ('studentAvailability')
+        sessionStorage.removeItem ('student')
+        sessionStorage.removeItem ('currentTab')
+        window.location.reload(false)
+    }
 }

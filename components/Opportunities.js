@@ -29,8 +29,14 @@ const Opportunities = ({props}) => {
                 }
                 saveLocation(location)
                 setCenter(location)
-                document.getElementById("contact-on-new-opportunity").checked = getStudentAvailability().contactOnNewServiceOpportunity
-                document.getElementById("opportunity-comment-id").value = getStudentAvailability().opportunityComment
+                if (document.getElementById("contact-on-new-opportunity")) {
+                    document.getElementById("contact-on-new-opportunity").checked = getStudentAvailability().contactOnNewServiceOpportunity
+                }
+                let comment =  getStudentAvailability().opportunityComment
+                if (!comment) {comment = ''}
+                if (document.getElementById("opportunity-comment-id")) {
+                    document.getElementById("opportunity-comment-id").value = comment
+                }
                 locationFound = true
             }
         }) 
@@ -56,11 +62,11 @@ const Opportunities = ({props}) => {
                 Title = opportunity[1][getLocale()].title
                 Description =  opportunity[1][getLocale()].description
             } else {
-                Title = opportunity[1].defaultLanguage.title
-                Description =  opportunity[1].defaultLanguage.description
+                Title = opportunity[1]['--'].title
+                Description =  opportunity[1]['--'].description
             }
             return (
-                <Card.Body>
+                <Card.Body key={opportunity[0]}>
                     <Card.Title>{Title}</Card.Title>
                     <Card.Text>{Description}</Card.Text>
                     <Button variant="primary" onClick = {()=>applyOpportunity(opportunity[0], opportunity[1].apply ? 0 : 1)}>{centerOpportunities[getLocation().locationId][opportunity[0]].apply ? T.UnApply : T.Apply}</Button>
@@ -119,7 +125,7 @@ const Opportunities = ({props}) => {
                     </label>
                     </div>
                     <br/>
-                    <Form.Group className={styles.body} controlId="opportunityComment">
+                    <Form.Group className={styles.body}>
                         <Form.Label >{T.Comment}</Form.Label>
                         <Form.Control as="textarea" rows={5}
                             id = "opportunity-comment-id"
