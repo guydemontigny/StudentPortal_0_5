@@ -1,9 +1,10 @@
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
-import { getLocation, saveLocation, getStudent, getStudentAvailability, saveStudentAvailabilityField, resetLocation, saveCenterOpportunities, getCenterOpportunities, getLocale } from '../libs/storage'
+import { getLocation, saveLocation, getStudent, getStudentAvailability, saveStudentAvailabilityField, resetLocation, saveCenterOpportunities, getCenterOpportunities, getLocale } from '../libs/sessionStorage'
 import Center from 'react-center'
 import styles from '../styles/login.module.css'
 import {Card, Button, Form} from 'react-bootstrap'
 import {useState, useEffect} from 'react'
+import {Now} from '../libs/system'
 
 const Opportunities = ({props}) => {
     const T = props.T
@@ -11,6 +12,41 @@ const Opportunities = ({props}) => {
     const [centerOpportunities, setCenterOpportunities] = useState(getCenterOpportunities())
     const [OpportunitiesToApply, setOpportunitiesToApply] = useState()
     const [applyPressed, setApplyPressed] = useState(false)
+    const [contactOnNewServiceOpportunity, setContactOnNewServiceOpportunity] = useState()
+    const [opportunityComment, setOpportunityComment] = useState('')
+    useEffect( () => {
+        const studentAvailability = getStudentAvailability()
+        setContactOnNewServiceOpportunity(studentAvailability.ContactOnNewServiceOpportunity)
+        setOpportunityComment(studentAvailability.OpportunityComment)
+    }) 
+    useEffect( () => {
+        if (getLocation().locationId && centerOpportunities[getLocation().locationId]) {
+            setOpportunitiesToApply(Object.entries(centerOpportunities[getLocation().locationId]).map((opportunity) => {
+                let Title = ''
+                let Description = ''
+                if (opportunity[1][getLocale()]) {
+                    Title = opportunity[1][getLocale()].title
+                    Description =  opportunity[1][getLocale()].description
+                } else {
+                    Title = opportunity[1]['--'].title
+                    Description =  opportunity[1]['--'].description
+                }
+                return (
+                    <Card.Body key={opportunity[0]}>
+                        <Card.Title>{Title}</Card.Title>
+                        <Card.Text>{Description}</Card.Text>
+                        <Button variant="primary" 
+                            onClick = {()=>applyOpportunity(opportunity[0], opportunity[1].apply ? 0 : 1)}>
+                                {centerOpportunities[getLocation().locationId][opportunity[0]].apply ? T.UnApply : T.Apply}
+                        </Button>
+                    </Card.Body>)
+            }))
+        } else {
+            setOpportunitiesToApply(null)
+        }}
+        , [center, applyPressed]
+    )
+    
     //
     // *** SETUP THE CENTERS DROP-DOWN
     //
@@ -29,10 +65,7 @@ const Opportunities = ({props}) => {
                 }
                 saveLocation(location)
                 setCenter(location)
-                if (document.getElementById("contact-on-new-opportunity")) {
-                    document.getElementById("contact-on-new-opportunity").checked = getStudentAvailability().contactOnNewServiceOpportunity
-                }
-                let comment =  getStudentAvailability().opportunityComment
+                let comment =  getStudentAvailability().OpportunityComment
                 if (!comment) {comment = ''}
                 if (document.getElementById("opportunity-comment-id")) {
                     document.getElementById("opportunity-comment-id").value = comment
@@ -49,33 +82,16 @@ const Opportunities = ({props}) => {
     function applyOpportunity(opportunityId, value) {
         const newCenterOpportunities = centerOpportunities
         newCenterOpportunities[getLocation().locationId][opportunityId].apply = value
+        if (value) {
+            newCenterOpportunities[getLocation().locationId][opportunityId].ApplicationDate = Now()
+        }  else {
+            newCenterOpportunities[getLocation().locationId][opportunityId].ApplicationDate = null
+        }
         saveCenterOpportunities(newCenterOpportunities)
         setCenterOpportunities(newCenterOpportunities)
         setApplyPressed(!applyPressed)
       }
       
-    useEffect( () => {if (getLocation().locationId && centerOpportunities[getLocation().locationId]) {
-        setOpportunitiesToApply(Object.entries(centerOpportunities[getLocation().locationId]).map((opportunity) => {
-            let Title = ''
-            let Description = ''
-            if (opportunity[1][getLocale()]) {
-                Title = opportunity[1][getLocale()].title
-                Description =  opportunity[1][getLocale()].description
-            } else {
-                Title = opportunity[1]['--'].title
-                Description =  opportunity[1]['--'].description
-            }
-            return (
-                <Card.Body key={opportunity[0]}>
-                    <Card.Title>{Title}</Card.Title>
-                    <Card.Text>{Description}</Card.Text>
-                    <Button variant="primary" onClick = {()=>applyOpportunity(opportunity[0], opportunity[1].apply ? 0 : 1)}>{centerOpportunities[getLocation().locationId][opportunity[0]].apply ? T.UnApply : T.Apply}</Button>
-                </Card.Body>)
-        }))} else setOpportunitiesToApply(null)}
-        , [center, applyPressed]
-    )
-    
-
     const plsSelectCenter = () => {
         if (!center.locationId) {
             return(
@@ -117,19 +133,19 @@ const Opportunities = ({props}) => {
                         </Card.Body>
                     </Card>
                     <br/>
-                    <div className="form-check">
-                    <input className="form-check form-check-inline" type="checkbox" id="contact-on-new-opportunity"
-                        onChange = {(e)=>saveStudentAvailabilityField("contactOnNewServiceOpportunity", e.target.checked? 1 : 0)} />
-                    <label className="form-check-label" htmlFor="contact-on-new-opportunity">
-                        {T.ContactOnNewOpportunity}
-                    </label>
-                    </div>
+                    <Form.Group  className={styles.body} controlId="contact-on-new-opportunity">
+                        <Form.Check type="checkbox" label={T.ContactOnNewOpportunity}
+                            checked = {contactOnNewServiceOpportunity == 1}
+                            onChange = {(e)=>{saveStudentAvailabilityField("ContactOnNewServiceOpportunity", e.target.checked? 1 : 0);
+                                              setContactOnNewServiceOpportunity(e.target.checked)}} />
+                    </Form.Group>
                     <br/>
                     <Form.Group className={styles.body}>
                         <Form.Label >{T.Comment}</Form.Label>
                         <Form.Control as="textarea" rows={5}
                             id = "opportunity-comment-id"
-                            onChange = {(e)=>saveStudentAvailabilityField("opportunityComment", e.target.value)}/>
+                            onChange = {(e)=>{setOpportunityComment(e.target.value); saveStudentAvailabilityField("OpportunityComment", e.target.value)}}
+                            value = {opportunityComment}/>
                     </Form.Group>
 
                 </div>) 

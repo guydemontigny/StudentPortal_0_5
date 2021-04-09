@@ -1,4 +1,4 @@
-import {getCredentials, saveCredentials, initialCredentials } from './storage'
+import {getCredentials, saveCredentials, initialCredentials } from './sessionStorage'
 import {apiUrl} from '../appConfigs/config'
 
 export function flushDRCode(){

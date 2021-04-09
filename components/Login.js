@@ -1,7 +1,7 @@
 import styles from '../styles/login.module.css'
 import Center from 'react-center';
-import { getCredentials, saveCredentials } from '../libs/storage';
-import {resendDRCode} from '../libs/APIs';
+import { getCredentials, saveCredentials } from '../libs/sessionStorage';
+import {resendDRCode} from '../libs/DRCodeManagement';
 import PagesContainer from '../components/PagesContainer'
 import LoginNavBar from '../components/LoginNavBar'
 
@@ -36,25 +36,25 @@ function Login({props}) {
     if (errCode === "ERR020") {
         return (
             <div>
-            <PagesContainer T={props.T}/>
-            <Center >
-                <div className={styles.center}>
-                    <form className={styles.center}>
-                        <div>
-                            <br/>
-                            <br/>{T.LogoutMsg}
-                        </div>
-                        <div>
-                            <br/><br/>
-                            <button id="btn-return-to-login-id" 
-                                onClick = {()=>{const credentials=getCredentials(); credentials.error = "ERR000"; saveCredentials(credentials)}}
-                                className={styles.button}>
-                                    {T.ReturnToLogin}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </Center>
+                <PagesContainer T={props.T}/>
+                <Center >
+                    <div className={styles.center}>
+                        <form className={styles.center}>
+                            <div>
+                                <br/>
+                                <br/>{T.LogoutMsg}
+                            </div>
+                            <div>
+                                <br/><br/>
+                                <button id="btn-return-to-login-id" 
+                                    onClick = {()=>{const credentials=getCredentials(); credentials.error = "ERR000"; saveCredentials(credentials)}}
+                                    className={styles.button}>
+                                        {T.ReturnToLogin}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </Center>
             </div>
         )
     }
@@ -135,7 +135,8 @@ function Login({props}) {
                     </h1>
                     <form className={styles.center}>
                         <label>
-                            <p>{T.Code1} {credentialsReturned.email}{credentialsReturned.cellPhone}</p>
+                            <div>{T.Code1} {credentialsReturned.email}{credentialsReturned.cellPhone}</div>
+                            <br/>
                             <div className="input-group"  >
                                 <div className={styles.center} >
                                 <button  

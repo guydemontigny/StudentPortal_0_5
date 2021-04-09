@@ -1,6 +1,6 @@
 import {Navbar, Nav, Spinner} from 'react-bootstrap'
 import LanguageNavDropDown from '../components/LanguageNavDropDown'
-import {logout} from '../libs/APIs'
+import {logout} from '../libs/DRCodeManagement'
 
 const LoginNavBar = ({props})=> {
     const T = props.T
@@ -22,8 +22,8 @@ const LoginNavBar = ({props})=> {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto" >
+                <Nav.Link href="" onClick={() => logout()}>{T.Quit}</Nav.Link>
                 <LanguageNavDropDown props = {props} />
-                <Nav.Link href="" onClick={() => logout()}>{T.Logout}</Nav.Link>
             </Nav>
         </Navbar.Collapse>
         </Navbar>

@@ -67,18 +67,18 @@ export function getDB(){
 //
 // Current locale
 //
-  export function saveLocale(locale){
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('locale', locale)
-    }
+export function saveLocale(locale){
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem('locale', locale)
   }
-  export function getLocale(){
-    if (typeof window !== 'undefined') {
-      return(sessionStorage.getItem('locale'))
-    } else {
-      return ''
-    }
+}
+export function getLocale(){
+  if (typeof window !== 'undefined') {
+    return(sessionStorage.getItem('locale'))
+  } else {
+    return ''
   }
+}
 //
 // The student table
 //
@@ -114,7 +114,7 @@ export function getStudentAvailability() {
             return studentAvailability[getLocation().locationId]
           }
   }
-  return {}
+  return initialStudentAvailability()
 }
 export function saveStudentAvailability(studentAvailability){
   if (typeof window !== 'undefined') {
@@ -126,6 +126,7 @@ export function saveStudentAvailability(studentAvailability){
     Object.entries(studentAvailability).map((locationAvailability) => {
       studentAvailabilityTotal[locationAvailability[0]] = locationAvailability[1]
     })
+//    sessionStorage.setItem('studentAvailability', JSON.stringify(studentAvailabilityTotal).replace(/"0"/g, '0').replace(/"1"/g, '1'))
     sessionStorage.setItem('studentAvailability', JSON.stringify(studentAvailabilityTotal))
   }
 }
@@ -133,11 +134,29 @@ export function saveStudentAvailabilityField(fieldName, fieldValue){
   if (typeof window !== 'undefined') {
     const studentAvailability = JSON.parse(sessionStorage.getItem('studentAvailability'))
     const currentLocation = getLocation().locationId
-    if (!studentAvailability[currentLocation]){studentAvailability[currentLocation]= {}}
+    if (!studentAvailability[currentLocation]){studentAvailability[currentLocation]= initialStudentAvailability()}
     studentAvailability[currentLocation][fieldName] = fieldValue
     sessionStorage.setItem('studentAvailability', JSON.stringify(studentAvailability))
   }
 }
+export function initialStudentAvailability() {
+  return {
+    StudentId : getStudent().studentId,
+    LocationId : getLocation().locationId,
+    ContactOnNewServiceOpportunity : 0,
+    OpportunityComment :"",
+    AvailableFromHome : 0,
+    AvailableForCourses : 0,
+    AvailableForChildCourses : 0,
+    AvailableBetweenCourses : 0,
+    AvailableWorkPeriod : 0,
+    AvailableLongTerm : 0,
+    AvailableLongTermFrom : null,
+    AvailableLongTermTo : null,
+    AvailabilityComment : "", 
+    rowid : ""
+    }
+  }
 //
 // The CenterOpportunities object
 //
@@ -176,7 +195,7 @@ export function saveSkills(skills){
 }
 export function setSkillValue(categoryId, skillId, value) {
   const skills = getSkills()
-  skills[categoryId][skillId] = value
+  skills[categoryId][skillId].SkillLevel = value
   saveSkills(skills)
 }
 //

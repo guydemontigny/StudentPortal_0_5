@@ -1,5 +1,5 @@
 import {Accordion, Card, Button, ToggleButtonGroup, ToggleButton, Spinner} from 'react-bootstrap'
-import {getSkills, getStudent, setSkillValue} from '../libs/storage'
+import {getSkills, getStudent, setSkillValue} from '../libs/sessionStorage'
 
 const Skills = ({props}) => {
     const T = props.T
@@ -8,14 +8,14 @@ const Skills = ({props}) => {
       // We have the category
       let skillItems = Object.entries(skillCategory[1]).map((skillItem) => {
         return (
-          <Card className="ml-1">
+          <Card className="ml-1" key={skillItem[0]}>
             <Card.Title className="ml-2">{T[skillItem[0]]}</Card.Title>
             <Card.Text className="ml-2 mb-3">{T.OfferService} &ensp;
               <ToggleButtonGroup 
                   type="radio" 
                   size="sm" 
                   name={skillItem[0]} 
-                  defaultValue={skillItem[1]} 
+                  defaultValue={skillItem[1].SkillLevel} 
                   onChange={(value) => {setSkillValue(skillCategory[0], skillItem[0], value)}}>
                 <ToggleButton value={3} key={skillItem[0] + "3"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 2)}} >{T.Professional}</ToggleButton>{' '}
                 <ToggleButton value={2} key={skillItem[0] + "2"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 2)}} >{T.Experienced}</ToggleButton>{' '}
@@ -39,7 +39,7 @@ const Skills = ({props}) => {
               {T[skillCategory[0]]}
             </Accordion.Toggle>
           </Card.Header>
-          <Accordion.Collapse eventKey={skillCategory[0]}>
+          <Accordion.Collapse eventKey={skillCategory[0]} key={skillCategory[0]}>
             <Card.Body>
               {skillItems}
             </Card.Body>
@@ -54,7 +54,7 @@ const Skills = ({props}) => {
         <Spinner animation="border" className="ml-3 font-weight-bold" variant="secondary" role="status" id="skills-spinner" hidden={true}>
           <span className="sr-only">Loading...</span>
         </Spinner> 
-        <br/><p className="ml-4 font-weight-bold">{T.ListOfSkills}{' '}{getStudent().firstName}{' '}{getStudent().lastName}</p>
+        <br/><div className="ml-4 font-weight-bold">{T.ListOfSkills}{' '}{getStudent().firstName}{' '}{getStudent().lastName}</div>
         <Accordion >
           {skillCategories}
         </Accordion>

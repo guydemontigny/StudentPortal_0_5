@@ -1,4 +1,4 @@
-import { getDB } from "../libs/storage"
+import { getDB } from "../libs/sessionStorage"
 
 export const defaultLocale = 'en'
 

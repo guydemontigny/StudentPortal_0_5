@@ -2,14 +2,15 @@ import {getStaticInfo} from '../../libs/getStaticInfo'
 import Opportunities from '../../components/Opportunities'
 import Availability from '../../components/Availability'
 import Skills from '../../components/Skills'
-import {getCredentials, saveCredentials, saveDB, saveLocale, saveStudent, saveSkills, getCurrentTab, saveCurrentTab, saveCenterOpportunities, saveLocation, getLocation, saveStudentAvailability} from '../../libs/storage'
+import {getCredentials, saveCredentials, saveDB, saveLocale, saveStudent, saveSkills, getCurrentTab, saveCurrentTab, saveCenterOpportunities, saveLocation, getLocation, saveStudentAvailability} from '../../libs/sessionStorage'
 import Login from '../../components/Login'
 import {apiUrl} from '../../appConfigs/config'
 import useSWR from "swr";
 import LanguageNavDropDown from '../../components/LanguageNavDropDown'
-import { logout } from '../../libs/APIs'
+import SaveAllToDR from '../../components/SaveAllToDR'
+import { logout } from '../../libs/DRCodeManagement'
 import React, { useState, useEffect } from 'react';
-import {Nav, Navbar, Spinner} from 'react-bootstrap'
+import {Nav, Navbar, NavDropdown, Spinner} from 'react-bootstrap'
 
 
 export default function App(props) {
@@ -20,7 +21,6 @@ export default function App(props) {
         let doc = document.getElementById("spinner-id")
         if (!doc){doc = document.getElementById("spinner-login-id")}
         if (doc) {doc.hidden = true}
-//        setCurrentTab(getCurrentTab())
     })
     
     saveDB(props.DB)
@@ -90,17 +90,62 @@ export default function App(props) {
                     </Navbar.Toggle>
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto"  >
-                        <Nav.Link href="" active={currentTab === 'skills'} onClick={() => {setExpanded(false); setCurrentTab("skills"); saveCurrentTab("skills")}}>{T.Skills}</Nav.Link>
-                        <Nav.Link href="" active={currentTab === 'opportunities'} onClick={() => {setExpanded(false); setCurrentTab("opportunities"); saveCurrentTab("opportunities")}}>{T.Opportunities}</Nav.Link>
-                        <Nav.Link href="" active={currentTab === 'availability'} onClick={() => {setExpanded(false); setCurrentTab("availability"); saveCurrentTab("availability")}}>{T.Availability}</Nav.Link>
+                        <NavDropdown title={T.File}>
+                            <NavDropdown.Item  href="" key='save'
+                                onClick = { () => {
+                                    setExpanded(false)
+                                    setCurrentTab("save")
+                                    saveCurrentTab("save")
+                                    }}>
+                                {T.Save}
+                                </NavDropdown.Item>
+                            <NavDropdown.Item  href="" key='save-exit'
+                                onClick = { () => {
+                                    setExpanded(false)
+                                    setCurrentTab("saveAndExit")
+                                    saveCurrentTab("saveAndExit")
+                                    }}>
+                                {T.SaveAndExit}
+                                </NavDropdown.Item>
+                            <NavDropdown.Item href="" key='exit'
+                                onClick = { () => {
+                                    logout()
+                                    }}>
+                                {T.Logout}
+                                </NavDropdown.Item>
+                        </NavDropdown>)
+                        <Nav.Link href="" active={currentTab === 'skills'}
+                            onClick={() => {
+                                setExpanded(false)
+                                setCurrentTab("skills")
+                                saveCurrentTab("skills")
+                                }}>
+                            {T.Skills}
+                            </Nav.Link>
+                        <Nav.Link href="" active={currentTab === 'opportunities'} 
+                            onClick={() => {
+                                setExpanded(false)
+                                setCurrentTab("opportunities")
+                                saveCurrentTab("opportunities")
+                                }}>
+                            {T.Opportunities
+                            }</Nav.Link>
+                        <Nav.Link href="" active={currentTab === 'availability'} 
+                            onClick={() => {
+                                setExpanded(false)
+                                setCurrentTab("availability")
+                                saveCurrentTab("availability")
+                                }}>
+                            {T.Availability}
+                            </Nav.Link>
                         <LanguageNavDropDown props = {props}/>
-                        <Nav.Link href="" onClick={() => logout()}>{T.Logout}</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
                 {(currentTab === 'skills') && <Skills props = {props} />}
                 {(currentTab === 'opportunities') && <Opportunities props = {props}/>}
                 {(currentTab === 'availability') && <Availability props = {props}/>}
+                {(currentTab === 'save' || currentTab === 'saveAndExit') && <SaveAllToDR props = {props}/>}
             </div>
         </div>
     )}
