@@ -136,7 +136,7 @@ const Availability = ({props}) => {
               <Form.Group  className={styles.body} controlId="work-home">
                 <Form.Check type="checkbox" label={T.WorkFromHome} 
                   checked = {availableFromHome == 1}
-                  disabled = {notAvailable}
+                  disabled = {notAvailable == 1}
                   onChange = {(e)=>{saveStudentAvailabilityField("AvailableFromHome", e.target.checked? 1 : 0)
                                     setAvailableFromHome(!e.target.checked)}}/>
                 <br/>
@@ -147,28 +147,28 @@ const Availability = ({props}) => {
               <Form.Group  className={styles.body} controlId="work-courses">
                 <Form.Check className={styles.indented} type="checkbox" label={T.Courses}
                   checked = {availableForCourses == 1} 
-                  disabled = {notAvailable}
+                  disabled = {notAvailable == 1}
                   onChange = {(e)=>{saveStudentAvailabilityField("AvailableForCourses", e.target.checked? 1 : 0)
                                     setAvailableForCourses(!e.target.checked)}} />
                 </Form.Group>
               <Form.Group  className={styles.body} controlId="work-child-courses">
                 <Form.Check className={styles.indented} type="checkbox" label={T.ChildCourses}
                   checked = {availableForChildCourses == 1}
-                  disabled = {notAvailable}
+                  disabled = {notAvailable == 1}
                   onChange = {(e)=>{saveStudentAvailabilityField("AvailableForChildCourses", e.target.checked? 1 : 0)
                                     setAvailableForChildCourses(!e.target.checked)}} />
                 </Form.Group>
               <Form.Group  className={styles.body} controlId="work-betwwen">
                 <Form.Check className={styles.indented} type="checkbox" label={T.BetweenCourses}
                   checked = {availableBetweenCourses == 1}
-                  disabled = {notAvailable}
+                  disabled = {notAvailable == 1}
                   onChange = {(e)=>{saveStudentAvailabilityField("AvailableBetweenCourses", e.target.checked? 1 : 0)
                                     setAvailableBetweenCourses(!e.target.checked)}} />
                 </Form.Group>
               <Form.Group  className={styles.body} controlId="work-period">
                 <Form.Check className={styles.indented} type="checkbox" label={T.WorkingPeriod}
                   checked = {availableWorkPeriod == 1}
-                  disabled = {notAvailable}
+                  disabled = {notAvailable == 1}
                   onChange = {(e)=>{saveStudentAvailabilityField("AvailableWorkPeriod", e.target.checked? 1 : 0)
                                     setAvailableWorkPeriod(!e.target.checked)}} />
                 </Form.Group>
@@ -177,7 +177,7 @@ const Availability = ({props}) => {
                   <Form.Check className={styles.indented} type="checkbox" label={T.LongTerm}
                     checked = {availableLongTerm == 1}
                     onChange = {(e)=>longTermChange(e)} 
-                    disabled = {notAvailable} />
+                    disabled = {notAvailable == 1} />
                 </Form.Group>
                 <Form.Group  className={styles.body} controlId="work-long-term">
                   <DatePicker

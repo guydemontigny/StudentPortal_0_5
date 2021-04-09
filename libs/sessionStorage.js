@@ -145,6 +145,7 @@ export function initialStudentAvailability() {
     LocationId : getLocation().locationId,
     ContactOnNewServiceOpportunity : 0,
     OpportunityComment :"",
+    NotAvailable : 0,
     AvailableFromHome : 0,
     AvailableForCourses : 0,
     AvailableForChildCourses : 0,
