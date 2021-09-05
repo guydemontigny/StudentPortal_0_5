@@ -11,6 +11,16 @@
 .center {
   color: black;
   text-align: center;
+  width: 400px;
+}
+.spinner {
+  position: fixed;
+  top: 200px;
+}
+.saving {
+  position: fixed;
+  top: 200px;
+  background-color: cornflowerblue;
 }
 .error {
   color:red;

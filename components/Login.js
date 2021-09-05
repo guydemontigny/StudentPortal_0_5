@@ -1,9 +1,10 @@
 import styles from '../styles/login.module.css'
 import Center from 'react-center';
-import { getCredentials, saveCredentials } from '../libs/sessionStorage';
+import {getCredentials, saveCredentials} from '../libs/sessionStorage';
 import {resendDRCode} from '../libs/DRCodeManagement';
 import PagesContainer from '../components/PagesContainer'
 import LoginNavBar from '../components/LoginNavBar'
+import { showPortalSpinner } from '../libs/system';
 
 function Login({props}) {
     const T = props.T
@@ -67,7 +68,6 @@ function Login({props}) {
       return (
         <div>
         <PagesContainer T={props.T}/>
-
         <div className="row">
             <div className="col-md-12">
                 <LoginNavBar props={props}/>
@@ -99,8 +99,7 @@ function Login({props}) {
                         <div>
                             <br/><br/>
                             <button id="btn-submit-id" 
-                                onClick = {()=>{
-                                        document.getElementById("spinner-login-id").hidden = false}}
+                                onClick = {()=>{showPortalSpinner(false)}}
                                 className={styles.button}>
                                     {T.Submit}
                             </button>
@@ -145,12 +144,12 @@ function Login({props}) {
                                     onClick={resendDRCode}>
                                         {T.ResendCode}
                                 </button>
-                                </div>
                                 <input type="text" 
                                     onChange={handleCodeChange} 
                                     id="code-input-id" 
                                     placeholder={T.Code2} 
                                     autoFocus="autofocus"/>
+                                </div>
                             </div>
                         </label>
                         <div>
@@ -162,7 +161,7 @@ function Login({props}) {
                             <button className={styles.button} 
                                     type = "submit"
                                     onClick={ () => {
-                                        document.getElementById("spinner-login-id").hidden = false
+                                        showPortalSpinner(true);
                                         const credentials = getCredentials(); 
                                         credentials.code = document.getElementById("code-input-id").value; 
                                         saveCredentials(credentials);

@@ -1,10 +1,11 @@
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
-import { getLocation, saveLocation, getStudent, getStudentAvailability, saveStudentAvailabilityField, resetLocation, saveCenterOpportunities, getCenterOpportunities, getLocale } from '../libs/sessionStorage'
-import Center from 'react-center'
+import { getLocation, saveLocation, getStudent, getStudentAvailability, saveStudentAvailabilityField, 
+    resetLocation, saveCenterOpportunities, getCenterOpportunities, getLocale, getWasModifiedColor, saveWasModified } from '../libs/sessionStorage'
 import styles from '../styles/login.module.css'
 import {Card, Button, Form} from 'react-bootstrap'
 import {useState, useEffect} from 'react'
 import {Now} from '../libs/system'
+import CentersList from './CentersList'
 
 const Opportunities = ({props}) => {
     const T = props.T
@@ -36,7 +37,10 @@ const Opportunities = ({props}) => {
                         <Card.Title>{Title}</Card.Title>
                         <Card.Text>{Description}</Card.Text>
                         <Button variant="primary" 
-                            onClick = {()=>applyOpportunity(opportunity[0], opportunity[1].apply ? 0 : 1)}>
+                            onClick = {()=>{applyOpportunity(opportunity[0], opportunity[1].apply ? 0 : 1)
+                                saveWasModified(true)
+                                props.setFileMenuColor(getWasModifiedColor())
+                                }}>
                                 {centerOpportunities[getLocation().locationId][opportunity[0]].apply ? T.UnApply : T.Apply}
                         </Button>
                     </Card.Body>)
@@ -50,21 +54,22 @@ const Opportunities = ({props}) => {
     //
     // *** SETUP THE CENTERS DROP-DOWN
     //
-    let optionItems = props.centers.map((center) => {
-        return <option value={center[0] + ' - ' + center[1]["LocationName"] } key={center[0]}>{center[1]["DhammaName"]}</option>
-        });
-    function handleCenterChange(value) {
-        const key = value.split(' ')
+    const options = []
+    props.centers.map((center) => {
+        options.push({value: center[0], label: center[1]["LocationName"] + (center[1]["DhammaName"] ? ', ' : '') + center[1]["DhammaName"]})
+    })
+    function handleCenterChange(e) {
+        const key = e.value
         let locationFound = false
         props.centers.map((center) => {
-            if(center[0] === key[0]) {
+            if(center[0] === key) {
                 const location = {
-                    locationId: key[0],
+                    locationId: key,
                     locationName: center[1]["LocationName"],
                     dhammaName: center[1]["DhammaName"]
                 }
                 saveLocation(location)
-                setCenter(location)
+                setCenter(getLocation())
                 let comment =  getStudentAvailability().OpportunityComment
                 if (!comment) {comment = ''}
                 if (document.getElementById("opportunity-comment-id")) {
@@ -137,14 +142,21 @@ const Opportunities = ({props}) => {
                         <Form.Check type="checkbox" label={T.ContactOnNewOpportunity}
                             checked = {contactOnNewServiceOpportunity == 1}
                             onChange = {(e)=>{saveStudentAvailabilityField("ContactOnNewServiceOpportunity", e.target.checked? 1 : 0);
-                                              setContactOnNewServiceOpportunity(e.target.checked)}} />
+                                              setContactOnNewServiceOpportunity(e.target.checked)
+                                              saveWasModified(true)
+                                              props.setFileMenuColor(getWasModifiedColor())
+                                              }} />
                     </Form.Group>
                     <br/>
                     <Form.Group className={styles.body}>
                         <Form.Label >{T.Comment}</Form.Label>
                         <Form.Control as="textarea" rows={5}
                             id = "opportunity-comment-id"
-                            onChange = {(e)=>{setOpportunityComment(e.target.value); saveStudentAvailabilityField("OpportunityComment", e.target.value)}}
+                            onChange = {(e)=>{setOpportunityComment(e.target.value)
+                                             saveStudentAvailabilityField("OpportunityComment", e.target.value)
+                                             saveWasModified(true)
+                                             props.setFileMenuColor(getWasModifiedColor())
+                                            }}
                             value = {opportunityComment}/>
                     </Form.Group>
 
@@ -153,30 +165,10 @@ const Opportunities = ({props}) => {
                 return null
             }
         }
-
     return(
         <div>
-            <Center>
-            <form className={styles.center} onSubmit={(e) => {
-                const centerSelected = document.getElementById('centerList').value
-                handleCenterChange(centerSelected)}}>
-            <br/>
-            {plsSelectCenter()}
-            <input className="form-control" 
-                list="centerlistOptions" 
-                onBlur={(e) => {handleCenterChange(e.target.value)}} 
-                id="centerList" 
-                defaultValue = {center.locationDisplayName}
-                placeholder={T.TypeToSearch} 
-                type="text" 
-                size="50" />
-            <datalist id="centerlistOptions">
-                {optionItems}
-            </datalist>
-            {welcome()}
-            </form>
-            </Center>
-            {opportunitiesList()}
+          <CentersList props={{...props, center, setCenter}} />
+           {opportunitiesList()}
         </div>
     )
 }

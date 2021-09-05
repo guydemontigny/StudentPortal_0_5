@@ -1,5 +1,6 @@
-import {Accordion, Card, Button, ToggleButtonGroup, ToggleButton, Spinner} from 'react-bootstrap'
-import {getSkills, getStudent, setSkillValue} from '../libs/sessionStorage'
+import {Accordion, Card, Button, ToggleButtonGroup, ToggleButton} from 'react-bootstrap'
+import {getSkills, getStudent, setSkillValue, saveWasModified, getWasModifiedColor} from '../libs/sessionStorage'
+import PortalSpinner from './PortalSpinner'
 
 const Skills = ({props}) => {
     const T = props.T
@@ -16,7 +17,10 @@ const Skills = ({props}) => {
                   size="sm" 
                   name={skillItem[0]} 
                   defaultValue={skillItem[1].SkillLevel} 
-                  onChange={(value) => {setSkillValue(skillCategory[0], skillItem[0], value)}}>
+                  onChange={(value) => {setSkillValue(skillCategory[0], skillItem[0], value)
+                                        saveWasModified(true)
+                                        props.setFileMenuColor(getWasModifiedColor())
+                                        }}>
                 <ToggleButton value={3} key={skillItem[0] + "3"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 2)}} >{T.Professional}</ToggleButton>{' '}
                 <ToggleButton value={2} key={skillItem[0] + "2"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 2)}} >{T.Experienced}</ToggleButton>{' '}
                 <ToggleButton value={1} key={skillItem[0] + "1"} variant = {"outline-info"} onClick={() => {setSkillValue(skillCategory[0], skillItem[0], 1)}} >{T.ICanLearn}</ToggleButton>{' '}
@@ -28,7 +32,7 @@ const Skills = ({props}) => {
         )
       })
       return (
-        <Card>
+        <Card key={skillCategory[0]}>
           <Card.Header>
             <Accordion.Toggle 
               as={Button} 
@@ -51,9 +55,7 @@ const Skills = ({props}) => {
 
     return(
       <div>
-        <Spinner animation="border" className="ml-3 font-weight-bold" variant="secondary" role="status" id="skills-spinner" hidden={true}>
-          <span className="sr-only">Loading...</span>
-        </Spinner> 
+        <PortalSpinner/> 
         <br/><div className="ml-4 font-weight-bold">{T.ListOfSkills}{' '}{getStudent().firstName}{' '}{getStudent().lastName}</div>
         <Accordion >
           {skillCategories}

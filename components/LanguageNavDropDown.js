@@ -1,5 +1,6 @@
 import { useRouter } from 'next/dist/client/router'
 import { NavDropdown } from 'react-bootstrap'
+import { showPortalSpinner } from '../libs/system';
 
 const LanguageNavDropDown = ({props}) => {
     //
@@ -11,12 +12,9 @@ const LanguageNavDropDown = ({props}) => {
         return <NavDropdown.Item onClick = { () => {handleLanguage({uiLang})}} href="" value={uiLang['0']} key={uiLang['0']}>{uiLang['1']}</NavDropdown.Item>
         });
     const handleLanguage = ({uiLang}) => {
-        let doc = document.getElementById("spinner-id")
-        if (!doc) {doc = document.getElementById("spinner-login-id")}
-        doc.hidden = false
+        showPortalSpinner(true)
         const locale = uiLang[0]
         router.push(`/${props.DB}/${locale}`)
-        doc.hidden = false
         }
     return (
         <NavDropdown 

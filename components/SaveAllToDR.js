@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { getCenterOpportunities, getCredentials, getCurrentTab, getSkills } from '../libs/sessionStorage'
+import { getCenterOpportunities, getCredentials, getCurrentTab, getSkills, 
+    saveWasModified, getWasModifiedColor} from '../libs/sessionStorage'
 import {apiUrl} from '../appConfigs/config'
 import {getDB} from '../libs/sessionStorage'
 import { logout } from '../libs/DRCodeManagement'
+import styles from '../styles/login.module.css'
+import Center from 'react-center'
+import Fade from 'react-reveal/Fade'
 
 const SaveAllToDR = ({props}) => {
     const [errorMessageSaveStudentLocationService, setErrorMessageSaveStudentLocationService] = useState(null);
     const [errorMessageSaveStudentServiceOpportunities, setErrorMessageSaveStudentServiceOpportunities] = useState(null);
     const [errorMessageSaveStudentSkills, setErrorMessageSaveStudentSkills] = useState(null);
+    const [fade, setFade] = useState(true)
     const T = props.T
     //
     // *** SAVE STUDENT LOCATION SERVICE ***
@@ -131,23 +136,35 @@ const SaveAllToDR = ({props}) => {
             errorMessageSaveStudentServiceOpportunities.endsWith('Success') &&
             errorMessageSaveStudentSkills.endsWith('Success')) {
         message = T.Success
-        if (getCurrentTab() === "saveAndExit"){logout()}
-    }else {
+        if (props.currentTab === "saveAndExit"){logout()}
+        setTimeout(() => {
+            setFade(false)
+            props.setCurrentTab(getCurrentTab())
+        }, 1000 )
+        saveWasModified(false)
+        props.setFileMenuColor(getWasModifiedColor())
+    } else {
         message = T.Error
         messageError1 = '\n' + errorMessageSaveStudentLocationService
         messageError2 = '\n' + errorMessageSaveStudentServiceOpportunities
         messageError3 = '\n' + errorMessageSaveStudentSkills
     }
     return (
-        <div className="card text-center m-3">
-            <div className="card-body">
-            <p>{message}</p>
-            <p>{messageError1}</p>
-            <p>{messageError2}</p>
-            <p>{messageError3}</p>
+      <Center>
+        <Fade when={fade}>
+            <div className = {styles.saving}>
+                <div className="card text-center m-3">
+                    <div className="card-body">
+                    <p>{message}</p>
+                    <p>{messageError1}</p>
+                    <p>{messageError2}</p>
+                    <p>{messageError3}</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    );
+        </Fade>
+      </Center>
+    )
 }
 
 export default SaveAllToDR

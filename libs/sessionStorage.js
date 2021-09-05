@@ -49,7 +49,26 @@ export function getCurrentTab(){
   } else {
     return 'skills'
   }
-}//
+}
+//
+// Was modified
+//
+export function saveWasModified(modified){
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem('wasModified', modified)
+  }
+}
+export function getWasModified(){
+  if (typeof window !== 'undefined') {
+    return sessionStorage.getItem('wasModified')
+  }
+}
+export function getWasModifiedColor(){
+  if (typeof window !== 'undefined') {
+    return (getWasModified()==='true' ? "text-danger" : "text-muted")
+  }
+}
+//
 // Database
 //
 export function saveDB(DB){
@@ -218,7 +237,7 @@ export function getLocation() {
 export function saveLocation(location){
   if (typeof window !== 'undefined') {
     if (location.locationId) {
-      location.locationDisplayName = location.locationId + ' - ' + location.locationName
+      location.locationDisplayName = location.locationName + (location.dhammaName ? ', ' : '') + location.dhammaName
     } else {
       location.locationDisplayName = ''
     }
