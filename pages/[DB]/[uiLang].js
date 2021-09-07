@@ -50,15 +50,14 @@ export default function App(props) {
 
         if (error) return (<div>An error has occurred: {error}</div>)
         if (!data) {
-            return null
+//            return null
         } else {
             saveCredentials(data.credentials) // Save returned credentials
             if (credentials.error) {
                 // Note that credentials contains the previous data before the read
                 // If, before the read, the credentials were fine (credentials.error === ''), this
                 //     is a refresh. In that case, do not update data with what comes from the server.
-                saveWasModified(false)
-                if (data.student) {saveStudent(data.student)}
+                if (data.student) {saveWasModified(false); saveStudent(data.student)}
                 if (data.studentAvailability) {saveStudentAvailability(data.studentAvailability)}
                 if (data.centerOpportunities) {saveCenterOpportunities(data.centerOpportunities)}
                 if (data.location) {saveLocation(data.location)}

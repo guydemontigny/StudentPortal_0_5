@@ -165,7 +165,7 @@ function Login({props}) {
                                         const credentials = getCredentials(); 
                                         credentials.code = document.getElementById("code-input-id").value; 
                                         saveCredentials(credentials);
-                                        window.location.reload(false);
+//                                        window.location.reload(false);
                                     }}>
                                 {T.Submit}
                             </button>
